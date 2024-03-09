@@ -2,6 +2,10 @@
 
 *Experiment to try the rust bindings for neovim.*
 
+https://github.com/melMass/echo.nvim/assets/7041726/162ceadb-b46b-4e8f-8fab-4fb03f0042f9
+
+ 
+
 Cross platform sound player for neovim (supports wav & mp3)  
 Tested on Native Windows and macOS
 
