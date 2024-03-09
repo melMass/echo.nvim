@@ -1,0 +1,26 @@
+import 'common.just'
+
+# [no-cd]
+
+build *param:
+    cargo build --release -- {{ param }}
+
+clean:
+    #!powershell
+    $ErrorActionPreference = 'Stop'
+    $ProjectDir = resolve-path "{{ ProjectDir }}"
+
+    Remove-Item -Recurse -Force "$ProjectDir\dist"
+
+dist *param:
+    #!powershell
+    $ErrorActionPreference = 'Stop'
+    $ProjectDir = resolve-path "{{ ProjectDir }}"
+
+    cd "$ProjectDir"
+    New-Item -Path "dist" -ItemType Directory
+
+    Copy-Item -Recurse "lua" "dist"
+    Copy-Item README.md "dist\README.md"
+
+    Copy-Item "target\release\{{ PluginName }}_native.dll" "dist\lua\{{ PluginName }}_native.dll"

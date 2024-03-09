@@ -1,0 +1,24 @@
+[package]
+name = "echo_native"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "echo_native"
+crate-type = ["cdylib"]
+path = "native/lib.rs"
+
+[dependencies]
+anyhow = "1.0.80"
+nvim-oxi = { git = "https://github.com/noib3/nvim-oxi.git", version = "0.4.2", features = [
+  "neovim-0-9",
+] }
+nvim-oxi-api = { git = "https://github.com/noib3/nvim-oxi.git", version = "0.4.2", features = [
+  "neovim-0-9",
+] }
+optfield = "0.3.0"
+rodio = { version = "0.17.3", features = [] }
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = { version = "1.0.114", features = ["preserve_order"] }
+thiserror = "1.0.57"
+tokio = { version = "1.36.0", features = ["full"] }
