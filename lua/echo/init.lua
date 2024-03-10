@@ -29,6 +29,8 @@ return {
 	end,
 	play_sound = native.play_sound,
 	options = native.options,
-	play_builtin = native.play_builtin,
+	play_builtin = function(name)
+		native.play_sound(string.format("builtin:%s", name))
+	end,
 	list_builtin_sounds = native.list_builtin_sounds,
 }

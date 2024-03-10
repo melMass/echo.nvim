@@ -33,22 +33,41 @@ fn echo_native() -> Result<Dictionary> {
     let mut module = Dictionary::new();
     let options = Arc::new(Mutex::new(Options::default()));
 
-    let play_sound = Function::from_fn({
+    let _play_sound = {
         let player = Arc::clone(&player);
         let options_clone = Arc::clone(&options);
+
         move |(path, amplify): (String, Option<f32>)| {
             let options = options_clone.lock().unwrap();
             let amplitude = amplify.unwrap_or(options.amplify);
-            let bytes = std::fs::read(&path).unwrap_or_else(|err| {
-                eprintln!("Failed to read file {}: {:?}", &path, err);
-                Vec::new()
-            });
+            let bytes = if let Some(rest) = path.strip_prefix("builtin:") {
+                let name = rest.trim();
+                let sound = builtin_sounds::SOUND_NAMES.iter().find(|&&n| n == name);
+                match sound {
+                    Some(snd) => {
+                        let data = builtin_sounds::get_sound_from_string(snd).unwrap().to_vec();
+                        data
+                    }
+                    None => {
+                        return Err(Error::SoundNotFound(format!(
+                            "{}, available sounds: {:?}",
+                            name,
+                            builtin_sounds::SOUND_NAMES
+                        )));
+                    }
+                }
+            } else {
+                std::fs::read(&path).unwrap_or_else(|err| {
+                    eprintln!("Failed to read file {}: {:?}", &path, err);
+                    Vec::new()
+                })
+            };
+
             let player = player.lock().unwrap();
             player.play_sound(bytes, amplitude);
             Ok::<(), Error>(())
         }
-    });
-    module.insert("play_sound", play_sound);
+    };
 
     // Setup exposed for lazy.nvim etc..
     let setup = Function::from_fn({
@@ -74,37 +93,8 @@ fn echo_native() -> Result<Dictionary> {
     });
     module.insert("options", get_options);
 
-    // Play a builtin file
-    let play_builtin = Function::from_fn({
-        let player = Arc::clone(&player);
-        let options_clone = Arc::clone(&options);
-        move |sound_name: String| {
-            let sound = builtin_sounds::SOUND_NAMES
-                .iter()
-                .find(|&&n| n == sound_name);
-            match sound {
-                Some(snd) => {
-                    let options = options_clone
-                        .lock()
-                        .unwrap_or_else(|poison| poison.into_inner());
-
-                    let data = builtin_sounds::get_sound_from_string(snd).unwrap().to_vec();
-                    let player = player.lock().unwrap();
-                    player.play_sound(data, options.amplify);
-                }
-                None => {
-                    return Err(Error::SoundNotFound(format!(
-                        "{}, available sounds: {:?}",
-                        sound_name,
-                        builtin_sounds::SOUND_NAMES
-                    )));
-                }
-            };
-
-            Ok::<(), Error>(())
-        }
-    });
-    module.insert("play_builtin", play_builtin);
+    let play_sound = Function::from_fn(_play_sound);
+    module.insert("play_sound", play_sound);
 
     // List builtin sounds
     let list_builtin = Function::from_fn(move |()| {
