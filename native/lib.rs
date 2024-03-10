@@ -77,7 +77,7 @@ fn echo_native() -> Result<Dictionary> {
             options.merge(opts);
 
             // print!("Options are now: {options:?}");
-            Ok::<(), Error>(())
+            Ok::<Options, Error>(options.clone())
         }
     });
     module.insert("setup", setup);

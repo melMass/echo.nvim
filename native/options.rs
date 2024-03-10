@@ -8,18 +8,23 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct Options {
     pub amplify: f32,
+    pub demo: bool,
 }
 
 impl Options {
     pub fn merge(&mut self, other: OptionsOpt) {
         // print!("Merging options, other: {other:?}");
         self.amplify = other.amplify.unwrap_or(self.amplify);
+        self.demo = other.demo.unwrap_or(self.demo);
     }
 }
 
 impl Default for Options {
     fn default() -> Self {
-        Self { amplify: 1.0 }
+        Self {
+            amplify: 1.0,
+            demo: false,
+        }
     }
 }
 
