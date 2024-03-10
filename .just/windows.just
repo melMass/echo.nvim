@@ -1,6 +1,7 @@
 import 'common.just'
 
-# [no-cd]
+install_deps *param:
+    Write-Output "No extra deps on windows"
 
 build *param:
     cargo build --release -- {{ param }}
