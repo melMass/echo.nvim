@@ -1,13 +1,13 @@
 use nvim_oxi::conversion::{Error as ConversionError, FromObject, ToObject};
 use nvim_oxi::serde::{Deserializer, Serializer};
-use nvim_oxi::{lua, Object};
+use nvim_oxi::{lua, print, Object};
 use optfield::optfield;
 use serde::{Deserialize, Serialize};
 
 #[optfield(pub OptionsOpt, attrs)]
 #[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct Options {
-    pub amplify: f32,
+    pub amplify: f64,
     pub demo: bool,
 }
 

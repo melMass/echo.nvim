@@ -37,7 +37,7 @@ fn echo_native() -> Result<Dictionary> {
         let player = Arc::clone(&player);
         let options_clone = Arc::clone(&options);
 
-        move |(path, amplify): (String, Option<f32>)| {
+        move |(path, amplify): (String, Option<f64>)| {
             let options = options_clone.lock().unwrap();
             let amplitude = amplify.unwrap_or(options.amplify);
             let bytes = if let Some(rest) = path.strip_prefix("builtin:") {
@@ -75,7 +75,6 @@ fn echo_native() -> Result<Dictionary> {
         move |opts: OptionsOpt| {
             let mut options = options_clone.lock().unwrap();
             options.merge(opts);
-
             // print!("Options are now: {options:?}");
             Ok::<Options, Error>(options.clone())
         }

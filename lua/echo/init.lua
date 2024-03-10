@@ -1,15 +1,15 @@
 local native = require("echo_native")
 
-local register_callback = function(event, sound)
+local register_callback = function(event, sound, amplify)
 	local callback = function()
 		if event == "BufWrite" then
 			local buf = vim.api.nvim_get_current_buf()
 			local buf_modified = vim.api.nvim_buf_get_option(buf, "modified")
 			if buf_modified then
-				native.play_sound(sound)
+				native.play_sound(sound, amplify)
 			end
 		else
-			native.play_sound(sound)
+			native.play_sound(sound, amplify)
 		end
 	end
 	return function()
@@ -41,7 +41,7 @@ return {
 				vim.api.nvim_create_autocmd(eventName, {
 					group = "echo_sound",
 					pattern = "*",
-					callback = register_callback(eventName, sound.path),
+					callback = register_callback(eventName, sound.path, sound.amplify),
 				})
 			end
 		end

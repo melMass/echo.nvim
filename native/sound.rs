@@ -39,8 +39,8 @@ impl SoundPlayer {
         Ok(SoundPlayer { sender: tx })
     }
 
-    pub fn play_sound(&self, bytes: Vec<u8>, amplify: f32) {
-        let sender = self.sender.send((bytes, amplify));
+    pub fn play_sound(&self, bytes: Vec<u8>, amplify: f64) {
+        let sender = self.sender.send((bytes, amplify as f32));
         if sender.is_err() {
             eprintln!("An error occurred: {:?}", sender.unwrap_err());
         }
