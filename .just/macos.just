@@ -2,7 +2,7 @@ import 'common.just'
 
 install_deps *param:
     #!/bin/bash
-    echo "No deps needed on macos"
+    brew install coreutils
 
 build *param:
     cargo build --release -- {{ param }}
@@ -11,7 +11,9 @@ clean:
     #!/bin/bash
     set -e
     PROJECT_DIR=$(realpath "{{ ProjectDir }}")
-    rm -rf "$PROJECT_DIR/dist"
+    if [ -d "$PROJECT_DIR/dist" ]; then
+      rm -rf "$PROJECT_DIR/dist"
+    fi
 
 dist *param:
     #!/bin/bash

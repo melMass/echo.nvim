@@ -11,7 +11,9 @@ clean:
     $ErrorActionPreference = 'Stop'
     $ProjectDir = resolve-path "{{ ProjectDir }}"
 
-    Remove-Item -Recurse -Force "$ProjectDir\dist"
+    if (Test-Path "$ProjectDir\dist") {
+      Remove-Item -Recurse -Force "$ProjectDir\dist"
+    }
 
 dist *param:
     #!powershell

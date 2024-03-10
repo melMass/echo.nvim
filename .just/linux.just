@@ -13,7 +13,9 @@ clean:
     #!/bin/bash
     set -e
     PROJECT_DIR=$(realpath "{{ ProjectDir }}")
-    rm -rf "$PROJECT_DIR/dist"
+    if [ -d "$PROJECT_DIR/dist" ]; then
+       rm -rf "$PROJECT_DIR/dist"
+    fi
 
 dist *param:
     #!/bin/bash
