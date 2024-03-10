@@ -66,10 +66,11 @@ jobs:
       - name: 📦 Zip release 
         shell: bash
         run: |
+          zip_name = "${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ inputs.name }}"
           if [ "$RUNNER_OS" == "Windows" ]; then
-            "C:/Program Files/7-Zip/7z.exe" a -mfb=258 -tzip ${{ env.repo_name }}-${{ inputs.name }}.zip dist
+            "C:/Program Files/7-Zip/7z.exe" a -mfb=258 -tzip "${zip_name}.zip" dist
           else
-            zip -r -9 -y -m ${{ env.repo_name }}-${{ inputs.name }}.zip dist
+            zip -r -9 -y -m "${zip_name}.zip" dist
           fi
 
       - name: ✅ Create release
@@ -77,4 +78,4 @@ jobs:
         with:
           tag_name: ${{ inputs.name }}
           files: |
-            ${{ env.repo_name }}-${{ inputs.name }}.zip
+            ${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ inputs.name }}.zip
