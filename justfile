@@ -11,6 +11,9 @@ build *param:
 clean *param:
     just -f .just/{{ BaseFile }}.just clean {{ param }}
 
+release name=("echo_nvim-" + BaseFile):
+    just -f .just/{{ BaseFile }}.just release {{ name }}
+
 # after building move the relevant files for release to "./dist"
 dist *param:
     just -f .just/{{ BaseFile }}.just dist {{ param }}

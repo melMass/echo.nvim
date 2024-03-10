@@ -13,9 +13,19 @@ clean:
     #!/bin/bash
     set -e
     PROJECT_DIR=$(realpath "{{ ProjectDir }}")
+
     if [ -d "$PROJECT_DIR/dist" ]; then
        rm -rf "$PROJECT_DIR/dist"
     fi
+
+release name:
+    #!/bin/bash
+    set -e
+    PROJECT_DIR=$(realpath "{{ ProjectDir }}")
+
+    cd "$PROJECT_DIR"
+    mv "dist" "echo.nvim"
+    zip -r -9 -y -m "{{ name }}.zip" "echo.nvim"
 
 dist *param:
     #!/bin/bash

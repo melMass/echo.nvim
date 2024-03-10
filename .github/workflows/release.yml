@@ -67,12 +67,8 @@ jobs:
         shell: bash
         run: |
           zip_name="${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ inputs.name }}"
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            "C:/Program Files/7-Zip/7z.exe" a -mfb=258 -tzip "${zip_name}.zip" dist
-          else
-            zip -r -9 -y -m "${zip_name}.zip" dist
-          fi
-
+          just release $zip_name
+          
       - name: ✅ Create release
         uses: softprops/action-gh-release@v1
         with:

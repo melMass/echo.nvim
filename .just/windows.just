@@ -15,6 +15,15 @@ clean:
       Remove-Item -Recurse -Force "$ProjectDir\dist"
     }
 
+release name:
+    #!powershell
+    $ErrorActionPreference = 'Stop'
+    $ProjectDir = resolve-path "{{ ProjectDir }}"
+
+    Set-Location -Path "$ProjectDir" 
+    Move-Item "dist" "echo.nvim"
+    7z a -mfb=258 -tzip "{{ name }}.zip" "echo.nvim"  
+
 dist *param:
     #!powershell
     $ErrorActionPreference = 'Stop'
