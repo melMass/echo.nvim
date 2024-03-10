@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: Release tag / name ?
+        required: true
+        default: 'latest'
+        type: string
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        targets: [
+          { os: ubuntu-latest, type: linux },
+          { os: macos-13,  type: macos },
+          { os: windows-latest,  type: windows },
+        ]
+
+    name: Echo.nvim release for ${{ matrix.targets.type }}
+    runs-on: ${{ matrix.targets.os }}
+    env:
+      IS_MANUAL_DISPATCH: ${{ github.event_name == 'workflow_dispatch' }}
+      repo_name: ${{ github.event.repository.name }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Neovim v0.9.5
+        uses: rhysd/action-setup-vim@v1
+        with:
+            neovim: true
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.targets.type }}-echo
+
+      - uses: extractions/setup-just@v1
+
+      - name: Make      
+        run: |
+          just make
+          ls dist
+
+      - name: 📦 Zip release 
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            "C:/Program Files/7-Zip/7z.exe" a -mfb=258 -tzip ${{ env.repo_name }}-${{ inputs.name }}.zip dist
+          else
+            zip -r -9 -y -m ${{ env.repo_name }}-${{ inputs.name }}.zip dist
+          fi
+
+      - name: ✅ Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.name }}
+          files: |
+            ${{ env.repo_name }}-${{ inputs.name }}.zip
