@@ -5,6 +5,9 @@
 Cross platform sound player for neovim (supports wav & mp3)  
 Tested on Native Windows and macOS
 
+## Limitations
+
+- Doesn't work under [WSL](https://github.com/microsoft/WSL/issues/2187) (I don't use it)
 
 ## Features
 
