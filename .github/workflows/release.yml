@@ -12,42 +12,53 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
-        targets: [
-          { os: ubuntu-latest, type: linux },
-          { os: macos-13,  type: macos },
-          { os: windows-latest,  type: windows },
-        ]
-
-    name: Echo.nvim release for ${{ matrix.targets.type }}
-    runs-on: ${{ matrix.targets.os }}
+        include:
+          - os: windows-latest
+            platform: win32
+            arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+        
+    name: release for ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
     env:
       IS_MANUAL_DISPATCH: ${{ github.event_name == 'workflow_dispatch' }}
       repo_name: ${{ github.event.repository.name }}
     steps:
-      - uses: actions/checkout@v4
+
+      - name: ♻️  Checking out the repository
+        uses: actions/checkout@v4
       
-      - name: Install Neovim v0.9.5
+      - name: 💻 Install Neovim v0.9.5
         uses: rhysd/action-setup-vim@v1
         with:
             neovim: true
 
-      - name: Install Rust
+      - name: 🦀 Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           profile: minimal
           override: true
 
-      - uses: Swatinem/rust-cache@v2
+
+      - name: 💾 Restore cache
+        uses: Swatinem/rust-cache@v2
         with:
-          key: ${{ matrix.targets.type }}-echo
+          key: ${{ matrix.platform }}-echo
 
       - uses: extractions/setup-just@v1
 
-      - name: Make      
+      - name: 🤝 Make      
         run: |
           just make
           ls dist
