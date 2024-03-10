@@ -6,7 +6,7 @@ local sorters = require("telescope.sorters")
 
 return require("telescope").register_extension({
 	exports = {
-		sounds = function(opts)
+		echo = function(opts)
 			opts = opts or {}
 
 			pickers
