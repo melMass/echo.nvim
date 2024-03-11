@@ -80,11 +80,14 @@ jobs:
                exit 1;;
           esac
 
-          zip_name="${{ matrix.platform }}_${{ matrix.arch }}-echo_native${extension}"
+          name="${{ matrix.platform }}_${{ matrix.arch }}-echo_native${extension}"
+          zip_name="${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ env.RELEASE_NAME }}"
 
-          just release_bin $zip_name
-          echo "name=$zip_name" >> $GITHUB_OUTPUT
+          just release_bin $name
+          just release $zip_name
 
+          echo "name=$name" >> $GITHUB_OUTPUT
+          echo "zip_name=${zip_name}.zip" >> $GITHUB_OUTPUT
       - name: ✅ Create release
         uses: softprops/action-gh-release@v2
         with:
@@ -92,4 +95,6 @@ jobs:
           prerelease: ${{ env.RELEASE_NAME == 'canary' }}
           body: |
             ${{ env.RELEASE_NAME == 'canary' && 'This release is automatically generated from main.'|| '' }}
-          files: ${{ steps.make.outputs.name  }}
+          files: |
+            ${{ steps.make.outputs.name  }}
+            ${{ steps.make.outputs.zip_name }}
