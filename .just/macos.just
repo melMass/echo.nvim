@@ -36,5 +36,4 @@ dist *param:
     cp -r "lua" "dist"
     cp README.md "dist/README.md"
 
-    cp "target/release/lib{{ PluginName }}_native.dylib" "dist/lua/{{
-        PluginName }}_native.so"
+    cp "target/release/lib{{ PluginName }}_native.dylib" "dist/lua/{{ PluginName }}_native.so"
