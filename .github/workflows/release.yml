@@ -81,7 +81,7 @@ jobs:
             exit 1
            fi
 
-           zip_name="-${{ matrix.platform }}_${{ matrix.arch }}-echo_native${extension}"
+           zip_name="${{ matrix.platform }}_${{ matrix.arch }}-echo_native${extension}"
 
            just release_bin $zip_name
            echo "name=$zip_name" >> $GITHUB_OUTPUT
