@@ -72,7 +72,7 @@ jobs:
 
           case '${{ matrix.os }}' in
              'windows-latest')
-               extension=".dylib";;
+               extension=".dll";;
              'macos-latest'|'ubuntu-latest')
                extension=".so";;
              *)
