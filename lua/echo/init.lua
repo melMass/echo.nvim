@@ -22,13 +22,15 @@ return {
 		opts = opts or {}
 		opts = native.setup(opts)
 		local events = opts.events or {}
+		-- NOTE: register demo sound/events
 		if opts.demo then
 			table.insert(events, {
 				BufRead = { path = "builtin:EXPAND", amplify = 1.0 },
 				BufWrite = { path = "builtin:SUCCESS_2", amplify = 1.0 },
-				CursorMovedI = { path = "builtin:BUTTON_3", amplify = 0.1 },
+				CursorMovedI = { path = "builtin:BUTTON_3", amplify = 0.45 },
 				ExitPre = { path = "builtin:COMPLETE_3", amplify = 1.0 },
-				InsertLeave = { path = "builtin:NOTIFICATION_5", amplify = 0.2 },
+				InsertLeave = { path = "builtin:NOTIFICATION_5", amplify = 0.5 },
+				-- LazyReload = { path = "builtin:NOTIFICATION_6", amplify = 0.2 },
 			})
 		end
 

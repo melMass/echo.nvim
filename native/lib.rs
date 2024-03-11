@@ -12,8 +12,8 @@ use options::{Options, OptionsOpt};
 use sound::SoundPlayer;
 
 // TODO:
-// - add a telescope picker with sound preview.
 // - add a way to use random sounds / amplitudes.
+// - add some logging to file / a verbose mode.
 
 mod builtin_sounds {
     include!(concat!(env!("OUT_DIR"), "/sounds.rs"));
