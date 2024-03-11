@@ -6,6 +6,9 @@ on:
       - main
     tags:
       - "v*"
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**/*'
   workflow_dispatch:
     inputs:
       name:
@@ -79,5 +82,6 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_NAME }}
           prerelease: ${{ env.RELEASE_NAME == 'canary' }}
+          body: ${{ env.RELEASE_NAME == 'canary' && 'This release is automatically generated from main.'|| '' }}
           files: |
             ${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ env.RELEASE_NAME }}.zip
