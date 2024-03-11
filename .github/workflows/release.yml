@@ -7,14 +7,14 @@ on:
     tags:
       - "v*"
     paths-ignore:
-      - '**/*.md'
-      - 'docs/**/*'
+      - "**/*.md"
+      - "docs/**/*"
   workflow_dispatch:
     inputs:
       name:
         description: Release tag / name ?
         required: true
-        default: 'latest'
+        default: "latest"
         type: string
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
           - os: ubuntu-latest
             platform: linux
             arch: x64
-        
+
     name: release for ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     env:
@@ -42,14 +42,13 @@ jobs:
       repo_name: ${{ github.event.repository.name }}
       RELEASE_NAME: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && github.ref_name || github.event_name == 'push' && github.ref == 'refs/heads/main' && 'canary' || github.event.inputs.name }}
     steps:
-
       - name: ♻️  Checking out the repository
         uses: actions/checkout@v4
-      
+
       - name: 💻 Install Neovim v0.9.5
         uses: rhysd/action-setup-vim@v1
         with:
-            neovim: true
+          neovim: true
 
       - name: 🦀 Install Rust
         uses: actions-rs/toolchain@v1
@@ -58,7 +57,6 @@ jobs:
           profile: minimal
           override: true
 
-
       - name: 💾 Restore cache
         uses: Swatinem/rust-cache@v2
         with:
@@ -66,31 +64,26 @@ jobs:
 
       - uses: extractions/setup-just@v1
 
-      - name: 🤝 Make      
+      - name: 🤝 Make
         shell: bash
         id: make
         run: |
-           just make 
+          just make 
 
-           if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]]; then
-            extension=".so"
-           elif [[ "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
-            extension=".dylib"
-           else
-            echo "Unsupported operating system"
-            exit 1
-           fi
+          case ${{ matrix.platform }} in
+             'windows-latest')
+               extension=".dylib";;
+             'macos-latest'|'ubuntu-latest')
+               extension=".so";;
+             *)
+               echo "Unsupported platform"
+               exit 1;;
+          esac
 
-           zip_name="${{ matrix.platform }}_${{ matrix.arch }}-echo_native${extension}"
+          zip_name="${{ matrix.platform }}_${{ matrix.arch }}-echo_native${extension}"
 
-           just release_bin $zip_name
-           echo "name=$zip_name" >> $GITHUB_OUTPUT
-
-      # - name: 📦 Zip release 
-      #   shell: bash
-      #   run: |
-      #     zip_name="${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ env.RELEASE_NAME }}"
-      #     just release $zip_name
+          just release_bin $zip_name
+          echo "name=$zip_name" >> $GITHUB_OUTPUT
 
       - name: ✅ Create release
         uses: softprops/action-gh-release@v2
@@ -99,4 +92,4 @@ jobs:
           prerelease: ${{ env.RELEASE_NAME == 'canary' }}
           body: |
             ${{ env.RELEASE_NAME == 'canary' && 'This release is automatically generated from main.'|| '' }}
-          files: ${{ steps.make.outputs.name  }} 
+          files: ${{ steps.make.outputs.name  }}
