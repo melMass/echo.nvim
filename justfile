@@ -15,7 +15,7 @@ release name=("echo_nvim-" + BaseFile):
     just -f .just/{{ BaseFile }}.just release {{ name }}
 
 release_bin name=("echo_nvim-" + BaseFile):
-    just -f .just/{{ BaseFile }}.just release {{ name }}
+    just -f .just/{{ BaseFile }}.just release_bin {{ name }}
 
 # after building move the relevant files for release to "./dist"
 dist *param:
