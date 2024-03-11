@@ -11,9 +11,11 @@ end
 
 -- check if the working tree is on a tag matching "v.*.*.*"
 local function get_git_tag()
-	local describe_command = "git describe --tags --exact-match 2>/dev/null"
-	local tag = execute(describe_command)
-	return tag:match("v%d+%.%d+%.%d+")
+	local describe_command = "git describe --tags --exact-match"
+	local tag = vim.fn.system(describe_command) --execute(describe_command)
+	if tag ~= nil then
+		return tag:match("v%d+%.%d+%.%d+")
+	end
 end
 
 local function sysname()
