@@ -1,6 +1,7 @@
 # echo.nvim
-![canary-status](https://img.shields.io/github/actions/workflow/status/melmass/echo.nvim/release.yml?style=flat-square&&label=canary)
-![latest-tag](https://img.shields.io/github/v/tag/melmass/echo.nvim?label=latest-stable&&style=flat-square&color=black)  
+
+[![canary-status](https://img.shields.io/github/actions/workflow/status/melmass/echo.nvim/release.yml?style=flat-square&&label=canary)](https://github.com/melMass/echo.nvim/releases/tag/canary)
+[![latest-tag](https://img.shields.io/github/v/tag/melmass/echo.nvim?label=latest-stable&&style=flat-square&color=black)](https://github.com/melMass/echo.nvim/releases/)
 
 *Experiment to try the rust bindings for neovim.*
 
