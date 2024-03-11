@@ -70,13 +70,13 @@ jobs:
         run: |
           just make 
 
-          case ${{ matrix.platform }} in
+          case '${{ matrix.os }}' in
              'windows-latest')
                extension=".dylib";;
              'macos-latest'|'ubuntu-latest')
                extension=".so";;
              *)
-               echo "Unsupported platform"
+               echo "Unsupported OS"
                exit 1;;
           esac
 
