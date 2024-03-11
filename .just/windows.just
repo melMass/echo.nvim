@@ -24,6 +24,14 @@ release name:
     Move-Item "dist" "echo.nvim"
     7z a -mfb=258 -tzip "{{ name }}.zip" "echo.nvim"  
 
+release_bin name:
+    #!powershell
+    $ErrorActionPreference = 'Stop'
+    $ProjectDir = resolve-path "{{ ProjectDir }}"
+
+    cd "$ProjectDir"
+    Copy-Item "target\release\{{ PluginName }}_native.dylib" "{{ name }}"
+
 dist *param:
     #!powershell
     $ErrorActionPreference = 'Stop'
