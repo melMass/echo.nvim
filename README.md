@@ -1,6 +1,6 @@
 # echo.nvim
-![release workflow](https://github.com/melmass/echo.nvim/actions/workflows/release.yml/badge.svg)
-
+![canary-status](https://img.shields.io/github/actions/workflow/status/melmass/echo.nvim/release.yml?style=flat-square&&label=canary)
+![latest-tag](https://img.shields.io/github/v/tag/melmass/echo.nvim?label=latest-stable&&style=flat-square&color=black)  
 
 *Experiment to try the rust bindings for neovim.*
 
