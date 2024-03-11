@@ -2,7 +2,8 @@
 
 *Experiment to try the rust bindings for neovim.*
 
-<video src="https://github.com/melMass/echo.nvim/assets/7041726/162ceadb-b46b-4e8f-8fab-4fb03f0042f9"/>
+<video
+src="https://github.com/melMass/echo.nvim/assets/7041726/162ceadb-b46b-4e8f-8fab-4fb03f0042f9"></video>
 
 Cross platform sound player for neovim (supports wav & mp3)  
 Tested on **Native Windows** and **macOS** (should work fine under linux too)
@@ -86,7 +87,7 @@ require("echo").setup(opts)
 
 There is a telescope picker to preview the builtin sounds:
 
-<video src="https://github.com/melMass/echo.nvim/assets/7041726/ec784fba-e64d-47fe-b578-da2556535070"/>
+<video src="https://github.com/melMass/echo.nvim/assets/7041726/ec784fba-e64d-47fe-b578-da2556535070"></video>
 
 To register it run: 
 
