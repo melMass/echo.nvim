@@ -13,10 +13,32 @@ Tested on Native Windows and macOS
 
 - I doesn't work under [WSL](https://github.com/microsoft/WSL/issues/1631)
 
+## Usage
+
+You can quickly register events from the
+[configuration](#configuration)'s `event` field.
+
+You can also use the module in lua:
+
+```lua
+local echo = require("echo")
+
+-- Play a sound from path
+echo.play_sound("/path/to/file.mp3")
+
+-- Play a sound from the builtins
+echo.play_sound("builtin:SUCCESS_2")
+
+-- List builtin sounds
+print(vim.inspect(echo.list_builtin_sounds())
+-- { "ALERT_1", "ALERT_2", "ALERT_3", "ALERT_4", "ALERT_5", "BUTTON_1", "BUTTON_2", "BUTTON_3", "BUTTON_4", "BUTTON_5", "BUTTON_6", "BUTTON_7", "BUTTON3", "CANCEL_1", "CANCEL_2", "COLLAPSE", "COMPLETE_1", "COMPLETE_2", "COMPLETE_3", "ERROR_1", "ERROR_2", "ERROR_3", "ERROR_4", "ERROR_5", "EXPAND", "NOTIFICATION_1", "NOTIFICATION_2", "NOTIFICATION_3", "NOTIFICATION_4", "NOTIFICATION_5", "NOTIFICATION_6", "NOTIFICATION_7", "NOTIFICATION_8", "NOTIFICATION_9", "SUCCESS_1", "SUCCESS_2", "SUCCESS_3", "TAB_1", "TAB_2", "TAB_3" }
+
+```
+
 ## Features
 
 - [x] Performant and cross platform SFX player (using rodio).
-- [ ] Rust <-> Lua Options
+- [x] Rust <-> Lua Options
   - [x] Basic Override defaults from Lua
   - [ ] Live update (should just work but not exposed properly yet)
 - [ ] Proper Lazy build step:
