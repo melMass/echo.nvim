@@ -1,4 +1,6 @@
 # echo.nvim
+![release workflow](https://github.com/melmass/echo.nvim/actions/workflows/release.yml/badge.svg)
+
 
 *Experiment to try the rust bindings for neovim.*
 
