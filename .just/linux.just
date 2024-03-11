@@ -27,6 +27,14 @@ release name:
     mv "dist" "echo.nvim"
     zip -r -9 -y -m "{{ name }}.zip" "echo.nvim"
 
+release_bin name:
+    #!/bin/bash
+    set -e
+    PROJECT_DIR=$(realpath "{{ ProjectDir }}")
+
+    cd "$PROJECT_DIR"
+    cp "target/release/lib{{ PluginName }}_native.so" "{{ name }}"
+
 dist *param:
     #!/bin/bash
     set -e

@@ -67,21 +67,36 @@ jobs:
       - uses: extractions/setup-just@v1
 
       - name: 🤝 Make      
-        run: |
-          just make
-          ls dist
-
-      - name: 📦 Zip release 
         shell: bash
+        id: make
         run: |
-          zip_name="${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ env.RELEASE_NAME }}"
-          just release $zip_name
-          
+           just make 
+
+           if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]]; then
+            extension=".so"
+           elif [[ "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
+            extension=".dylib"
+           else
+            echo "Unsupported operating system"
+            exit 1
+           fi
+
+           zip_name="-${{ matrix.platform }}_${{ matrix.arch }}-echo_native${extension}"
+
+           just release_bin $zip_name
+           echo "name=$zip_name" >> $GITHUB_OUTPUT
+
+      # - name: 📦 Zip release 
+      #   shell: bash
+      #   run: |
+      #     zip_name="${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ env.RELEASE_NAME }}"
+      #     just release $zip_name
+
       - name: ✅ Create release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_NAME }}
           prerelease: ${{ env.RELEASE_NAME == 'canary' }}
-          body: ${{ env.RELEASE_NAME == 'canary' && 'This release is automatically generated from main.'|| '' }}
-          files: |
-            ${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ env.RELEASE_NAME }}.zip
+          body: |
+            ${{ env.RELEASE_NAME == 'canary' && 'This release is automatically generated from main.'|| '' }}
+          files: ${{ steps.make.outputs.name  }} 
