@@ -30,7 +30,7 @@ release_bin name:
     $ProjectDir = resolve-path "{{ ProjectDir }}"
 
     cd "$ProjectDir"
-    Copy-Item "target\release\{{ PluginName }}_native.dylib" "{{ name }}"
+    Copy-Item "target\release\{{ PluginName }}_native.dll" "{{ name }}"
 
 dist *param:
     #!powershell
