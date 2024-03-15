@@ -21,7 +21,7 @@ mod builtin_sounds {
 
 #[nvim_oxi::plugin]
 fn echo_native() -> Result<Dictionary> {
-    let player = match SoundPlayer::new() {
+    let player = match SoundPlayer::new(3) {
         Ok(p) => Arc::new(Mutex::new(p)),
         Err(e) => {
             return Err(

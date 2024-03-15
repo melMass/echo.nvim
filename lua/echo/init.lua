@@ -17,6 +17,36 @@ local register_callback = function(event, sound, amplify)
 	end
 end
 
+local setupAudioBufferUI = function(bufnr)
+	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
+
+	vim.api.nvim_set_option_value("buftype", "nofile", { buf = bufnr })
+	vim.api.nvim_set_option_value("bufhidden", "hide", { buf = bufnr })
+	vim.api.nvim_set_option_value("swapfile", false, { buf = bufnr })
+
+	local audio_file = vim.api.nvim_buf_get_name(bufnr)
+	local ui_elements = {
+		"Audio File: " .. audio_file,
+		"Play [p] Pause [p] Stop [s] Seek fwd [l] Seek bck [h]",
+	}
+	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, ui_elements)
+
+	vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+	local mappings = {
+		["p"] = string.format("require('echo').play_sound(\"%s\")", audio_file:gsub("\\", "/")),
+	}
+	for key, command in pairs(mappings) do
+		vim.api.nvim_buf_set_keymap(
+			bufnr,
+			"n",
+			key,
+			"<cmd>lua " .. command .. "<CR>",
+			{ noremap = true, silent = true }
+		)
+	end
+	native.play_sound(audio_file)
+end
+
 return {
 	setup = function(opts)
 		opts = opts or {}
@@ -47,6 +77,20 @@ return {
 				})
 			end
 		end
+		-- TODO: expose this as an options
+		vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+			pattern = { "*.mp3", "*.wav", "*.flac" },
+			callback = function()
+				local buf = vim.api.nvim_get_current_buf()
+				vim.api.nvim_set_option_value("filetype", "audio", { buf = buf })
+			end,
+		})
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "audio",
+			callback = function()
+				setupAudioBufferUI(vim.fn.bufnr())
+			end,
+		})
 	end,
 	play_sound = native.play_sound,
 	options = native.options,
