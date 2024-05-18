@@ -69,7 +69,7 @@ export def --env "release" [name:string, --nightly] {
   let build = $"target/release/($env.opts.name)_native.($ext)"
   let target_bin = $"($env.opts.prefix)-($env.opts.name)_native.($ext)"
 
-  cp $build echo.nvim/lua/
+  cp $build echo.nvim/lua
   cp $build $target_bin
 
   let zip_name = zip_release $name
