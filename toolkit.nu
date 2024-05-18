@@ -45,7 +45,7 @@ export def "zip_release" [name:string] {
   return $name
 }
 
-export def "release" [name:string, --nightly] {
+export def --env "release" [name:string, --nightly] {
   cd $env.HERE
   install_deps
 
@@ -73,5 +73,9 @@ export def "release" [name:string, --nightly] {
   cp $build $target_bin
 
   let zip_name = zip_release $name
+  
+  $"name=($target_bin)(char newline)" | save -a $env.GITHUB_OUTPUT
+  $"zip_name=($zip_name)(char newline)" | save -a $env.GITHUB_OUTPUT
+
   return {bin:$target_bin, zip:$zip_name}
 }
