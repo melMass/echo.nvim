@@ -70,6 +70,7 @@ jobs:
       - name: 🤝 Make
         id: make
         run: |
+          ls
           overlay use toolkit.nu
           let rel = (release ${{ env.RELEASE_NAME }})
           $"name=($rel.bin)" | save -a $env.GITHUB_OUTPUT
