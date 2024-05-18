@@ -39,6 +39,7 @@ print(vim.inspect(echo.list_builtin_sounds())
 ## Features
 
 - [x] Performant and cross platform SFX player (using rodio).
+- [x] [Overseer](https://github.com/stevearc/overseer.nvim/blob/master/doc/components.md) component (wip): allow you to bind sounds to task statuses on completion.
 - [x] Rust <-> Lua Options
   - [x] Basic Override defaults from Lua
   - [ ] Live update (should just work but not exposed properly yet)
@@ -97,4 +98,4 @@ To register it run:
 require("telescope").register_extension("echo")
 ```
 
-You can then call the command: `Telescope echo`
+You can then call the command: `:Telescope echo`
