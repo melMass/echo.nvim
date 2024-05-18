@@ -64,10 +64,11 @@ export def --env "release" [name:string, --nightly] {
 
   # NOTE: copy the binary
   let os = $nu.os-info.name
-  let ext = if $os == "windows" {"dll"} else {"so"}
+  let ext = if $os == "windows" {"dll"} else if $os == "macos" { "dylib" } else {"so"}
 
+  let bin_prefix = if $env.opts.windows { "" } else {"lib"}
   let build_bin = $"($env.opts.name)_native.($ext)"
-  let build = $"target/release/($build_bin)"
+  let build = $"target/release/($bin_prefix)($build_bin)"
   let target_bin = $"($env.opts.prefix)-($env.opts.name)_native.($ext)"
 
   cp $build $"echo.nvim/lua/($build_bin)"
