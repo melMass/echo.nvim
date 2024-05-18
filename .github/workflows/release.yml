@@ -16,6 +16,9 @@ on:
         required: true
         default: "latest"
         type: string
+defaults:
+  run:
+    shell: nu {0}
 
 jobs:
   build:
@@ -45,49 +48,34 @@ jobs:
       - name: ♻️  Checking out the repository
         uses: actions/checkout@v4
 
-      - name: 💻 Install Neovim v0.9.5
+      - name: 💻 Install Neovim Stable
         uses: rhysd/action-setup-vim@v1
         with:
           neovim: true
 
       - name: 🦀 Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-          profile: minimal
-          override: true
 
       - name: 💾 Restore cache
         uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.platform }}-echo
 
-      - uses: extractions/setup-just@v1
+      - uses: hustcer/setup-nu@v3.10
+        with:
+        check-latest: true
 
       - name: 🤝 Make
-        shell: bash
         id: make
         run: |
-          just make 
+          overlay use toolkit.nu
+          let rel = (release ${{ env.RELEASE_NAME }})
+          $"name=($rel.bin)" | save -a $env.GITHUB_OUTPUT
+          $"zip_name=($rel.zip)" | save -a $env.GITHUB_OUTPUT
 
-          case '${{ matrix.os }}' in
-             'windows-latest')
-               extension=".dll";;
-             'macos-latest'|'ubuntu-latest')
-               extension=".so";;
-             *)
-               echo "Unsupported OS"
-               exit 1;;
-          esac
 
-          name="${{ matrix.platform }}_${{ matrix.arch }}-echo_native${extension}"
-          zip_name="${{ env.repo_name }}-${{ matrix.platform }}_${{ matrix.arch }}-${{ env.RELEASE_NAME }}"
-
-          just release_bin $name
-          just release $zip_name
-
-          echo "name=$name" >> $GITHUB_OUTPUT
-          echo "zip_name=${zip_name}.zip" >> $GITHUB_OUTPUT
       - name: ✅ Create release
         uses: softprops/action-gh-release@v2
         with:
