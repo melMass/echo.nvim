@@ -8,7 +8,10 @@ install_deps *param:
 
 # build the native module in target/release.
 build *param:
-    just -f .just/{{ BaseFile }}.just build {{ param }}
+    cargo build --release -- {{ param }}
+
+build-nigthly *param:
+    cargo build --release --no-default-features -F nightly -- {{ param }}
 
 # remove the ./dist folder.
 clean *param:
@@ -27,4 +30,4 @@ dist *param:
     just -f .just/{{ BaseFile }}.just dist {{ param }}
 
 # install deps, build, clean and make dist
-make: install_deps build clean dist
+make *param: install_deps build clean dist

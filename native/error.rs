@@ -10,6 +10,9 @@ pub enum Error {
 
     #[error("Could not find sound `{0}`")]
     SoundNotFound(String),
+
+    #[error("Runtime: `{0}`")]
+    Runtime(String),
 }
 
 impl Into<api::Error> for Error {

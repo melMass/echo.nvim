@@ -6,9 +6,6 @@ install_deps *param:
     sudo apt update
     sudo apt install -y libasound2-dev
 
-build *param:
-    cargo build --release -- {{ param }}
-
 clean:
     #!/bin/bash
     set -e

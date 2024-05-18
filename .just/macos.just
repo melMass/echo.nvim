@@ -4,9 +4,6 @@ install_deps *param:
     #!/bin/bash
     brew install coreutils
 
-build *param:
-    cargo build --release -- {{ param }}
-
 clean:
     #!/bin/bash
     set -e

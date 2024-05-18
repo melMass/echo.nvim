@@ -2,12 +2,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 fn main() {
-    // if cfg!(target_env = "msvc") {
-    //     println!("cargo:rustc-link-search=native=assets/lib");
-    //     println!("cargo:rustc-link-lib=dylib=nvim");
-    //     println!("cargo:rustc-link-lib=dylib=lua51");
-    // }
-    //
     // NOTE: Collecting the "builtin" sounds at build time, this is exposed as a module
     // where all sounds are const array of bytes and a SOUND_NAMES array containing the full list
     // of names
