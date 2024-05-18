@@ -59,17 +59,18 @@ export def --env "release" [name:string, --nightly] {
 
   # NOTE: make a separate directory 
   mkdir echo.nvim 
-  cp -r lua/* echo.nvim
+  cp -r lua echo.nvim
   cp README.md echo.nvim
 
   # NOTE: copy the binary
   let os = $nu.os-info.name
   let ext = if $os == "windows" {"dll"} else {"so"}
 
-  let build = $"target/release/($env.opts.name)_native.($ext)"
+  let build_bin = $"($env.opts.name)_native.($ext)"
+  let build = $"target/release/($build_bin)"
   let target_bin = $"($env.opts.prefix)-($env.opts.name)_native.($ext)"
 
-  cp $build echo.nvim/lua
+  cp $build $"echo.nvim/lua/($build_bin)"
   cp $build $target_bin
 
   let zip_name = zip_release $name
