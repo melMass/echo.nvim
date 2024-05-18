@@ -67,6 +67,11 @@ jobs:
         with:
           check-latest: true
 
+      - name: Where are we
+        run: |
+          print (ls)
+          print (ls **/**)
+
       - name: 🤝 Make
         id: make
         run: |
