@@ -47,6 +47,7 @@ export def "zip_release" [name:string] {
 
 export def --env "release" [name:string, --nightly] {
   cd $env.HERE
+  tree
   install_deps
 
   if $nightly {
@@ -70,6 +71,7 @@ export def --env "release" [name:string, --nightly] {
   let build_bin = $"($env.opts.name)_native.($ext)"
   let build = $"target/release/($bin_prefix)($build_bin)"
   let target_bin = $"($env.opts.prefix)-($env.opts.name)_native.($ext)"
+  tree
 
   cp $build $"echo.nvim/lua/($build_bin)"
   cp $build $target_bin
