@@ -47,7 +47,8 @@ export def "zip_release" [name:string] {
 
 export def --env "release" [name:string, --nightly] {
   cd $env.HERE
-  tree
+
+  $env.opts.name = "echo"
   install_deps
 
   if $nightly {
@@ -71,16 +72,13 @@ export def --env "release" [name:string, --nightly] {
   let build_bin = $"($env.opts.name)_native.($ext)"
   let build = $"target/release/($bin_prefix)($build_bin)"
   let target_bin = $"($env.opts.prefix)-($env.opts.name)_native.($ext)"
-  tree
 
   cp $build $"echo.nvim/lua/($build_bin)"
   cp $build $target_bin
 
   # let zip_name = zip_release $name
   let zip_name = zip-release $name echo.nvim
-  
-  $"name=($target_bin)(char newline)" | save -a $env.GITHUB_OUTPUT
-  $"zip_name=($zip_name)(char newline)" | save -a $env.GITHUB_OUTPUT
+  { name: $target_bin, zip_name: $zip_name} | to-github --output
 
   return {bin:$target_bin, zip:$zip_name}
 }
