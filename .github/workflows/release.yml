@@ -16,9 +16,6 @@ on:
         required: true
         default: "latest"
         type: string
-defaults:
-  run:
-    shell: nu {0}
 
 jobs:
   build:
@@ -63,22 +60,20 @@ jobs:
         with:
           key: ${{ matrix.platform }}-echo
 
-      - uses: hustcer/setup-nu@v3.10
-        with:
-          check-latest: true
-
       - name: Where are we
-        run: |
-          print (ls)
-          print (ls **/**)
+        uses: melMass/actions@nukit
+        with:
+          script: |
+            print (ls)
+            print (ls **/**)
 
       - name: 🤝 Make
         id: make
-        run: |
-          nu --commands "
-           use ./toolkit.nu
-           toolkit release ${{ env.RELEASE_NAME }}
-          "
+        uses: melMass/actions@nukit
+        with:
+          script: |
+            use ./toolkit.nu
+            toolkit release ${{ env.RELEASE_NAME }}
 
       - name: ✅ Create release
         uses: softprops/action-gh-release@v2

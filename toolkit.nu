@@ -1,12 +1,12 @@
 export-env {
-  let os = $nu.os-info
-  $env.opts = {
-    name: echo,
-    windows: ($os.name == windows),
-    linux: ($os.name == linux),
-    darwin: ($os.name == macos),
-    prefix: $"($os.name)_($os.arch)"
-  }
+  # let os = $nu.os-info
+  # $env.opts = {
+  #   name: echo,
+  #   windows: ($os.name == windows),
+  #   linux: ($os.name == linux),
+  #   darwin: ($os.name == macos),
+  #   prefix: $"($os.name)_($os.arch)"
+  # }
   $env.HERE = ("." | path expand)
 }
 
@@ -74,7 +74,8 @@ export def --env "release" [name:string, --nightly] {
   cp $build $"echo.nvim/lua/($build_bin)"
   cp $build $target_bin
 
-  let zip_name = zip_release $name
+  # let zip_name = zip_release $name
+  let zip_name = zip-release $name echo.nvim
   
   $"name=($target_bin)(char newline)" | save -a $env.GITHUB_OUTPUT
   $"zip_name=($zip_name)(char newline)" | save -a $env.GITHUB_OUTPUT
