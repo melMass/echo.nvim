@@ -4,7 +4,7 @@ local register_callback = function(event, sound, amplify)
 	local callback = function()
 		if event == "BufWrite" then
 			local buf = vim.api.nvim_get_current_buf()
-			local buf_modified = vim.api.nvim_buf_get_option(buf, "modified")
+			local buf_modified = vim.api.nvim_get_option_value("modified", { buf = buf })
 			if buf_modified then
 				native.play_sound(sound, amplify)
 			end
@@ -17,6 +17,7 @@ local register_callback = function(event, sound, amplify)
 	end
 end
 
+-- WIP "buffer" audio player
 local setupAudioBufferUI = function(bufnr)
 	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
 
