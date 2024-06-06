@@ -47,9 +47,9 @@ local function download_release(tag)
 
 	local cmd = ""
 	if vim.fn.executable("curl") == 1 then
-		cmd = string.format("curl -fSL -o lua/%s %s", lib_name, url)
+		cmd = string.format("curl -fSL -o lua/echo_native.%s %s", extension, url)
 	elseif vim.fn.executable("wget") == 1 then
-		cmd = string.format("wget --no-verbose --tries=3 --retry-connrefused -O lua/%s %s", lib_name, url)
+		cmd = string.format("wget --no-verbose --tries=3 --retry-connrefused -O lua/echo_native.%s %s", extension, url)
 	else
 		error("build: Neither curl nor wget is available to download the binary.")
 		return
