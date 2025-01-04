@@ -60,13 +60,6 @@ jobs:
         with:
           key: ${{ matrix.platform }}-echo
 
-      - name: Where are we
-        uses: melMass/actions@nukit
-        with:
-          script: |
-            print (ls)
-            print (ls **/**)
-
       - name: 🤝 Make
         id: make
         uses: melMass/actions@nukit
