@@ -1,5 +1,6 @@
 use nvim_oxi::api;
 use thiserror::Error as ThisError;
+
 #[derive(Clone, Debug, ThisError, Eq, PartialEq)]
 pub enum Error {
     #[error("Failed to initialize: `{0}`")]
@@ -20,8 +21,10 @@ impl Into<api::Error> for Error {
         api::Error::Other(self.to_string())
     }
 }
-impl From<Error> for nvim_oxi::Error {
-    fn from(val: Error) -> Self {
-        nvim_oxi::Error::from(Into::<api::Error>::into(val))
+
+impl Into<nvim_oxi::Error> for Error {
+    fn into(self) -> nvim_oxi::Error {
+        nvim_oxi::Error::Api(self.into())
     }
 }
+

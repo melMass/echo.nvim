@@ -2,7 +2,7 @@ use crate::builtin_sounds;
 use crate::error::Error;
 use rodio::{source::Source, Decoder, OutputStream};
 use std::io::Cursor;
-use std::path::PathBuf;
+// use std::path::PathBuf;
 use std::sync::mpsc::{self, Sender};
 use std::sync::Arc;
 use std::thread;

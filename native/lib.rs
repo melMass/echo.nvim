@@ -1,12 +1,12 @@
-#[cfg(all(feature = "nightly", feature = "stable"))]
-compile_error!("feature \"stable\" and feature \"nightly\" cannot be enabled at the same time");
+// #[cfg(all(feature = "nightly", feature = "stable"))]
+// compile_error!("feature \"stable\" and feature \"nightly\" cannot be enabled at the same time");
 
 mod error;
 mod options;
 mod sound;
 use std::sync::{Arc, Mutex};
 
-use nvim_oxi::print;
+// use nvim_oxi::print;
 use nvim_oxi::{Dictionary, Function, Result};
 use nvim_oxi_api::{
     opts::CreateCommandOpts,
@@ -40,7 +40,7 @@ fn echo_native() -> Result<Dictionary> {
     let options = Arc::new(Mutex::new(Options::default()));
 
     // Setup exposed for lazy.nvim etc..
-    let setup = Function::from_fn({
+    let setup: Function<OptionsOpt, Options> = Function::from_fn({
         let options_clone = Arc::clone(&options);
         move |opts: OptionsOpt| {
             let mut options = options_clone.lock().unwrap();
@@ -51,7 +51,7 @@ fn echo_native() -> Result<Dictionary> {
     });
 
     // Get runtime options
-    let get_options = Function::from_fn({
+    let get_options: Function<(), Options> = Function::from_fn({
         let options_clone = Arc::clone(&options);
         move |()| {
             let options = options_clone.lock().unwrap();
@@ -60,7 +60,7 @@ fn echo_native() -> Result<Dictionary> {
         }
     });
 
-    let play_sound = Function::from_fn({
+    let play_sound: Function<(std::string::String, Option<f64>), ()> = Function::from_fn({
         let player = Arc::clone(&player);
         let options_clone = Arc::clone(&options);
 
@@ -82,13 +82,13 @@ fn echo_native() -> Result<Dictionary> {
         move |args: CommandArgs| {
             let sound = args.args.unwrap_or("builtin:NOTIFICATION_7".to_owned());
             let player = player.lock().unwrap();
-            player.play_from_path(sound, 1.0).map_err(|e| e.into())
+            player.play_from_path(sound, 1.0)
             // let bang = if args.bang { "!" } else { "" };
         }
     };
 
     // List builtin sounds
-    let list_builtin = Function::from_fn(move |()| {
+    let list_builtin: Function<(), Vec<std::string::String>> = Function::from_fn(move |()| {
         let keys: Vec<String> = builtin_sounds::SOUND_NAMES
             .iter()
             .map(|x| x.to_string())

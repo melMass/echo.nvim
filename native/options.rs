@@ -56,7 +56,7 @@ impl ToObject for OptionsOpt {
 }
 
 impl lua::Poppable for Options {
-    unsafe fn pop(lstate: *mut lua::ffi::lua_State) -> Result<Self, lua::Error> {
+    unsafe fn pop(lstate: *mut lua::ffi::State) -> Result<Self, lua::Error> {
         // nvim_oxi::print!("called pop on Options");
         let obj = Object::pop(lstate)?;
         Self::from_object(obj).map_err(lua::Error::pop_error_from_err::<Self, _>)
@@ -64,7 +64,7 @@ impl lua::Poppable for Options {
 }
 
 impl lua::Pushable for Options {
-    unsafe fn push(self, lstate: *mut lua::ffi::lua_State) -> Result<std::ffi::c_int, lua::Error> {
+    unsafe fn push(self, lstate: *mut lua::ffi::State) -> Result<std::ffi::c_int, lua::Error> {
         // nvim_oxi::print!("called push on Options");
         self.to_object()
             .map_err(lua::Error::push_error_from_err::<Self, _>)?
@@ -72,7 +72,7 @@ impl lua::Pushable for Options {
     }
 }
 impl lua::Poppable for OptionsOpt {
-    unsafe fn pop(lstate: *mut lua::ffi::lua_State) -> Result<Self, lua::Error> {
+    unsafe fn pop(lstate: *mut lua::ffi::State) -> Result<Self, lua::Error> {
         // nvim_oxi::print!("called pop on OptionsOpt");
         let obj = Object::pop(lstate)?;
         Self::from_object(obj).map_err(lua::Error::pop_error_from_err::<Self, _>)
@@ -80,7 +80,7 @@ impl lua::Poppable for OptionsOpt {
 }
 
 impl lua::Pushable for OptionsOpt {
-    unsafe fn push(self, lstate: *mut lua::ffi::lua_State) -> Result<std::ffi::c_int, lua::Error> {
+    unsafe fn push(self, lstate: *mut lua::ffi::State) -> Result<std::ffi::c_int, lua::Error> {
         // nvim_oxi::print!("called push on OptionsOpt");
         self.to_object()
             .map_err(lua::Error::push_error_from_err::<Self, _>)?

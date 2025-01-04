@@ -10,16 +10,16 @@ path = "native/lib.rs"
 
 [dependencies]
 anyhow = "1.0"
-nvim-oxi = { git = "https://github.com/noib3/nvim-oxi.git", version = "0.4.2", optional = true }
-nvim-oxi-api = { git = "https://github.com/noib3/nvim-oxi.git", version = "0.4.2", optional = true }
-optfield = "0.3"
-rodio = { version = "0.17", features = [] }
+nvim-oxi = { git = "https://github.com/noib3/nvim-oxi.git", version = "0.5.1", optional = true }
+nvim-oxi-api = { git = "https://github.com/noib3/nvim-oxi.git", version = "0.5.1", optional = true }
+optfield = "^0.4"
+rodio = { version = "0.20.1", features = [] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order"] }
-thiserror = "1.0"
-tokio = { version = "1.36", features = ["full"] }
+thiserror = "^2.0"
+tokio = { version = "^1.42", features = ["full"] }
 
 [features]
 default = ["stable"]
-stable = ["nvim-oxi/neovim-0-9", "nvim-oxi-api/neovim-0-9"]
+stable = ["nvim-oxi/neovim-0-10", "nvim-oxi-api/neovim-0-10"]
 nightly = ["nvim-oxi/neovim-nightly", "nvim-oxi-api/neovim-nightly"]
