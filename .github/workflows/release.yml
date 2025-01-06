@@ -31,7 +31,7 @@ jobs:
           - os: macos-latest
             platform: darwin
             arch: arm64
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             platform: linux
             arch: x64
 
@@ -76,5 +76,5 @@ jobs:
           body: |
             ${{ env.RELEASE_NAME == 'canary' && 'This release is automatically generated from main.'|| '' }}
           files: |
-            ${{ steps.make.outputs.name  }}
-            ${{ steps.make.outputs.zip_name }}
+            ${{ env.TLK_bin  }}
+            ${{ env.TLK_zip }}
