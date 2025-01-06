@@ -6,9 +6,10 @@ on:
       - main
     tags:
       - "v*"
-    paths-ignore:
-      - "**/*.md"
-      - "docs/**/*"
+    paths:
+      - "build.rs"
+      - "native/**/*.rs"
+      - "Cargo.lock"
   workflow_dispatch:
     inputs:
       name:
