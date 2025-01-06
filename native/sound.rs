@@ -11,27 +11,24 @@ use tokio::sync::Semaphore;
 
 pub struct SoundPlayer {
     sender: Sender<(Vec<u8>, f32)>,
-    semaphore: Arc<Semaphore>,
 }
 
 impl SoundPlayer {
     pub fn new(max_concurrent_sounds: usize) -> Result<Self, Error> {
         let (tx, rx) = mpsc::channel::<(Vec<u8>, f32)>();
-        let semaphore = Arc::new(Semaphore::new(max_concurrent_sounds));
-        let semaphore_clone = semaphore.clone();
+        let semaphore = Semaphore::new(max_concurrent_sounds);
         thread::spawn(move || {
             let rt = Runtime::new().unwrap();
             let (_stream, stream_handle) = OutputStream::try_default().unwrap();
 
             for (bytes, amplify) in rx.iter() {
-                let semaphore_clone = semaphore_clone.clone();
                 rt.block_on(async {
-                    let _permit = semaphore_clone
-                        .acquire_owned()
+                    let _permit = semaphore
+                        .acquire()
                         .await
                         .expect("Failed to acquire semaphore permit");
 
-                    let cursor = Cursor::new(bytes.clone());
+                    let cursor = Cursor::new(bytes);
                     if let Ok(source) = Decoder::new(cursor) {
                         let source = source.amplify(amplify);
                         stream_handle
@@ -44,10 +41,7 @@ impl SoundPlayer {
             }
         });
 
-        Ok(SoundPlayer {
-            sender: tx,
-            semaphore,
-        })
+        Ok(SoundPlayer { sender: tx })
     }
     pub fn play_from_path(&self, path: String, amplify: f64) -> Result<(), Error> {
         let bytes = if let Some(rest) = path.strip_prefix("builtin:") {
