@@ -1,4 +1,4 @@
-local native = require("echo_native")
+local native = nil
 
 local register_callback = function(event, sound, amplify)
 	local callback = function()
@@ -50,6 +50,24 @@ end
 
 return {
 	setup = function(opts)
+		local native = require("echo_native")
+		local success, result = pcall(require, "echo_native")
+
+		if not success then
+			local build_utils = require("echo.build-utills")
+			build_utils.download_binary()
+			local resuccess, reresult = pcall(require, "echo_native")
+			if not resuccess then
+				vim.notify(
+					"echo.nvim: Failed to load the native library. Try running `:Echo install` or read the troubleshooting guide.",
+					vim.log.levels.ERROR,
+					{ title = "echo.nvim" }
+				)
+				return
+			end
+			native = resuccess
+		end
+
 		opts = opts or {}
 		opts = native.setup(opts)
 		local events = opts.events or {}
