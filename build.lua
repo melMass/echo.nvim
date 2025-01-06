@@ -20,7 +20,7 @@ end
 local function libext()
 	local _sysname = vim.loop.os_uname().sysname
 	local mappings = {
-		["Darwin"] = "dylib", -- so ?? TODO: check as I still don't understand what should be used on macos
+		["Darwin"] = "so",
 		["Linux"] = "so",
 		["Windows_NT"] = "dll",
 	}
@@ -35,9 +35,8 @@ local function log(msg)
 	vim.notify(msg, vim.log.levels.DEBUG, { title = "echo.nvim" })
 end
 
--- shadows the builtin error()
-local function error(msg)
-	vim.notify(msg, vim.log.levels.ERROR, { title = "echo.nvim" }) -- Most prominent notifications
+local function log_error(msg)
+	vim.notify(msg, vim.log.levels.ERROR, { title = "echo.nvim" })
 end
 
 local function download_release(tag)
@@ -51,12 +50,11 @@ local function download_release(tag)
 	elseif vim.fn.executable("wget") == 1 then
 		cmd = string.format("wget --no-verbose --tries=3 --retry-connrefused -O lua/echo_native.%s %s", extension, url)
 	else
-		error("build: Neither curl nor wget is available to download the binary.")
+		log_error("build: Neither curl nor wget is available to download the binary.")
 		return
 	end
 
 	log("Executing " .. cmd)
-
 	vim.fn.system(cmd)
 
 	if vim.v.shell_error == 0 then
@@ -66,7 +64,7 @@ local function download_release(tag)
 		if vim.fn.filereadable("lua/" .. lib_name) == 1 then
 			os.remove("lua/" .. lib_name)
 		end
-		error("build: Failed to download the binary.")
+		log_error("build: Failed to download the binary.")
 	end
 end
 

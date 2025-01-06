@@ -3,3 +3,6 @@
 assets/sounds
 assets/sounds_wav
 playground.lua
+
+.DS_Store
+lua/echo_native.*

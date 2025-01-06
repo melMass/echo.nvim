@@ -78,7 +78,7 @@ return {
 				})
 			end
 		end
-		-- TODO: expose this as an options
+		-- TODO: expose this as an option
 		vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 			pattern = { "*.mp3", "*.wav", "*.flac" },
 			callback = function()

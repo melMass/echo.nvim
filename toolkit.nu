@@ -32,19 +32,6 @@ export def "clean" [] {
   }
 }
 
-export def "zip_release" [name: string] {
-  cd $env.HERE
-  let name = $"echo.nvim-($env.opts.prefix)-($env.opts.name)-($name).zip"
-
-  if $env.os == windows {
-    7z a -mfb=258 -tzip $name "echo.nvim"
-  } else {
-    ^zip -r -9 -y -m $name "echo.nvim"
-  }
-
-  return $name
-}
-
 export def --env "release" [name: string = "canary", --ci, --nightly] {
   cd $env.HERE
 
@@ -79,7 +66,7 @@ export def --env "release" [name: string = "canary", --ci, --nightly] {
     cp $build $target_bin
 
     # let zip_name = zip_release $name
-    let zip_name = zip-release $name echo.nvim
+    let zip_name = zip-release echo.nvim $name
     {name: $target_bin zip_name: $zip_name} | to-github --output
     return {bin: $target_bin zip: $zip_name}
   }

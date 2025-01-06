@@ -5,8 +5,6 @@ local STATUS = constants.STATUS
 
 --TODO: expose status / sound mapping as params
 
----@alias overseer.Status "PENDING"|"RUNNING"|"CANCELED"|"SUCCESS"|"FAILURE"|"DISPOSED"
-
 return {
 	desc = "Basic component to bridge echo and overseer, mimicking the notify one",
 	params = {
@@ -36,8 +34,9 @@ return {
 		local lookup = util.list_to_map(params.statuses)
 		return {
 			last_status = nil,
-			---@param status overseer.Status Can be CANCELED, FAILURE, or SUCCESS
+			---@param status overseer.Status The status of the task.
 			---@param result table A result table.
+			---@diagnostic disable-next-line: unused-local
 			on_complete = function(self, task, status, result)
 				-- Called when the task has reached a completed state.
 				if lookup[status] then
