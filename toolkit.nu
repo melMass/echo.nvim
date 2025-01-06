@@ -67,7 +67,17 @@ export def --env "release" [name: string = "canary", --ci, --nightly] {
 
     # let zip_name = zip_release $name
     let zip_name = zip-release echo.nvim $name
-    {name: $target_bin zip_name: $zip_name} | to-github --output
-    return {bin: $target_bin zip: $zip_name}
+    let tlk = {bin: $target_bin zip: $zip_name}
+    let release_files = [$tlk.bin $tlk.zip]
+
+    let existing = (gh release list --json name | from json | get name)
+
+    if $env.RELEASE_NAME not-in $existing {
+      gh release create ...$release_files
+    } else {
+      gh release upload $env.RELEASE_NAME ...$release_files  --clobber
+    }
+
+    return tlk
   }
 }
