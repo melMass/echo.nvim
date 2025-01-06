@@ -1,5 +1,4 @@
 name: Release
-
 on:
   push:
     branches:
@@ -19,7 +18,37 @@ on:
         type: string
 
 jobs:
+  check-tags:
+    permissions:
+      contents: write
+    name: Chech tags
+    runs-on: ubuntu-24.04
+    env:
+      IS_MANUAL_DISPATCH: ${{ github.event_name == 'workflow_dispatch' }}
+      repo_name: ${{ github.event.repository.name }}
+      RELEASE_NAME: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && github.ref_name || github.event_name == 'push' && github.ref == 'refs/heads/main' && 'canary' || github.event.inputs.name }}
+
+    steps:
+      - name: ♻️  Checking out the repository
+        if: ${{ env.RELEASE_NAME == 'canary' }}
+        uses: actions/checkout@v4
+
+      - name: "Delete Tag if canary"
+        uses: melMass/actions@nukit
+        if: ${{ env.RELEASE_NAME == 'canary' }}
+        with:
+          script: |
+            let res = (gh release delete canary --cleanup-tag --yes | complete)
+            if $res.exit_code > 0 {
+              print $"(ansi yellow_italic)Tag/release doesn't exist yet?(ansi reset) - (ansi red_bold)($res.stderr)(ansi reset)"
+            } else {
+              print $"(ansi green_bold)Tag canary deleted.(ansi reset)"
+            }
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   build:
+    needs: [check-tags]
     permissions:
       contents: write
     strategy:
@@ -42,6 +71,7 @@ jobs:
       IS_MANUAL_DISPATCH: ${{ github.event_name == 'workflow_dispatch' }}
       repo_name: ${{ github.event.repository.name }}
       RELEASE_NAME: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && github.ref_name || github.event_name == 'push' && github.ref == 'refs/heads/main' && 'canary' || github.event.inputs.name }}
+
     steps:
       - name: ♻️  Checking out the repository
         uses: actions/checkout@v4
