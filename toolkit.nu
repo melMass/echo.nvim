@@ -79,7 +79,10 @@ export def --env "release" [name: string = "canary", --ci, --nightly] {
           gh release upload $env.RELEASE_NAME ...$release_files --clobber
         }
       } else {
-        gh release create $env.RELEASE_NAME ...$release_files
+        let created = (gh release create $env.RELEASE_NAME ...$release_files | complete)
+        if $created.exit_code > 0 {
+          gh release upload $env.RELEASE_NAME ...$release_files --clobber
+        }
       }
     } else {
       gh release upload $env.RELEASE_NAME ...$release_files --clobber
