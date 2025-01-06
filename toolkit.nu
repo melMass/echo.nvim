@@ -70,23 +70,12 @@ export def --env "release" [name: string = "canary", --ci, --nightly] {
     let tlk = {bin: $target_bin zip: $zip_name}
     let release_files = [$tlk.bin $tlk.zip]
 
-    let existing = (gh release list --json name | from json | get name)
+    let body = if $env.RELEASE_NAME == 'canary' { 'This release is automatically generated from main.' } else { '' }
 
-    if $env.RELEASE_NAME not-in $existing {
-      if $env.RELEASE_NAME == "canary" {
-        let created = (gh release create $env.RELEASE_NAME ...$release_files --prerelease --latest=false | complete)
-        if $created.exit_code > 0 {
-          gh release upload $env.RELEASE_NAME ...$release_files --clobber
-        }
-      } else {
-        let created = (gh release create $env.RELEASE_NAME ...$release_files | complete)
-        if $created.exit_code > 0 {
-          gh release upload $env.RELEASE_NAME ...$release_files --clobber
-        }
-      }
-    } else {
-      gh release upload $env.RELEASE_NAME ...$release_files --clobber
-    }
+    let canary = $env.RELEASE_NAME == 'canary'
+
+    publish-release --body=$body --canary=$canary $env.RELEASE_NAME ...$release_files
+
     return $tlk
   }
 }

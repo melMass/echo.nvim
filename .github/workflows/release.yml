@@ -36,12 +36,7 @@ jobs:
         uses: melMass/actions@nukit
         with:
           script: |
-            let res = (gh release delete $env.RELEASE_NAME --cleanup-tag --yes | complete)
-            if $res.exit_code > 0 {
-              print $"(ansi yellow_italic)Tag/release doesn't exist yet?(ansi reset) - (ansi red_bold)($res.stderr)(ansi reset)"
-            } else {
-              print $"(ansi green_bold)Tag ($env.RELEASE_NAME) deleted.(ansi reset)"
-            }
+            delete-release $env.RELEASE_NAME
         env:
           GH_TOKEN: ${{ github.token }}
 
