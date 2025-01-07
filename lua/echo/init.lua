@@ -63,6 +63,7 @@ M.setup = function(opts)
 				vim.log.levels.INFO,
 				{ title = "echo.nvim" }
 			)
+			error(reresult)
 			return
 		end
 		native = reresult
