@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - main
-    tags:
-      - "v*"
+    # tags:
+    #   - "v*"
     paths:
+      - "build.lua"
+      - "lua/echo/init.lua"
       - "build.rs"
       - "native/**/*.rs"
       - "Cargo.lock"
@@ -21,7 +23,7 @@ jobs:
   check-tags:
     permissions:
       contents: write
-    name: Chech tags
+    name: Check tags
     runs-on: ubuntu-24.04
     env:
       IS_MANUAL_DISPATCH: ${{ github.event_name == 'workflow_dispatch' }}
