@@ -48,73 +48,87 @@ local setupAudioBufferUI = function(bufnr)
 	native.play_sound(audio_file)
 end
 
-return {
-	setup = function(opts)
-		local native = require("echo_native")
-		local success, result = pcall(require, "echo_native")
+local M = {}
 
-		if not success then
-			local build_utils = require("echo.build-utills")
-			build_utils.download_binary()
-			local resuccess, reresult = pcall(require, "echo_native")
-			if not resuccess then
-				vim.notify(
-					"echo.nvim: Failed to load the native library. Try running `:Echo install` or read the troubleshooting guide.",
-					vim.log.levels.ERROR,
-					{ title = "echo.nvim" }
-				)
-				return
-			end
-			native = resuccess
+M.setup = function(opts)
+	local success, result = pcall(require, "echo_native")
+
+	if not success then
+		local build_utils = require("echo.build-utils")
+		build_utils.download_binary()
+		local resuccess, reresult = pcall(require, "echo_native")
+		if not resuccess then
+			vim.notify(
+				"Failed to load the native library, if you just installed echo that's expected, you can now restart neovim.",
+				vim.log.levels.INFO,
+				{ title = "echo.nvim" }
+			)
+			return
 		end
+		native = reresult
+	else
+		native = result
+	end
 
-		opts = opts or {}
-		opts = native.setup(opts)
-		local events = opts.events or {}
-		-- NOTE: register demo sound/events
-		if opts.demo then
-			table.insert(events, {
-				BufRead = { path = "builtin:EXPAND", amplify = 1.0 },
-				BufWrite = { path = "builtin:SUCCESS_2", amplify = 1.0 },
-				CursorMovedI = { path = "builtin:BUTTON_3", amplify = 0.45 },
-				ExitPre = { path = "builtin:COMPLETE_3", amplify = 1.0 },
-				InsertLeave = { path = "builtin:NOTIFICATION_5", amplify = 0.5 },
-				-- LazyReload = { path = "builtin:NOTIFICATION_6", amplify = 0.2 },
+	if native == nil then
+		return
+	end
+
+	M.play_sound = native.play_sound
+	M.options = native.options
+	M.list_builtin_sounds = native.list_builtin_sounds
+
+	M.play_builtin = function(name)
+		native.play_sound(string.format("builtin:%s", name))
+	end
+
+	opts = opts or {}
+	opts = native.setup(opts)
+	local events = opts.events or {}
+	-- NOTE: register demo sound/events
+	if opts.demo then
+		table.insert(events, {
+			BufRead = { path = "builtin:EXPAND", amplify = 1.0 },
+			BufWrite = { path = "builtin:SUCCESS_2", amplify = 1.0 },
+			CursorMovedI = { path = "builtin:BUTTON_3", amplify = 0.45 },
+			ExitPre = { path = "builtin:COMPLETE_3", amplify = 1.0 },
+			InsertLeave = { path = "builtin:NOTIFICATION_5", amplify = 0.5 },
+			-- LazyReload = { path = "builtin:NOTIFICATION_6", amplify = 0.2 },
+		})
+	end
+
+	vim.api.nvim_create_augroup("echo_sound", {
+		clear = true,
+	})
+
+	for _, event in ipairs(events) do
+		for eventName, sound in pairs(event) do
+			vim.api.nvim_create_autocmd(eventName, {
+				group = "echo_sound",
+				pattern = "*",
+				callback = register_callback(eventName, sound.path, sound.amplify),
 			})
 		end
+	end
+	-- TODO: expose this as an option
+	vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+		pattern = { "*.mp3", "*.wav", "*.flac" },
+		callback = function()
+			local buf = vim.api.nvim_get_current_buf()
+			vim.api.nvim_set_option_value("filetype", "audio", { buf = buf })
+		end,
+	})
+	vim.api.nvim_create_autocmd("FileType", {
+		pattern = "audio",
+		callback = function()
+			setupAudioBufferUI(vim.fn.bufnr())
+		end,
+	})
+end
 
-		vim.api.nvim_create_augroup("echo_sound", {
-			clear = true,
-		})
+M.play_sound = nil --native.play_sound,
+M.options = nil --native.options,
+M.play_builtin = nil
+M.list_builtin_sounds = nil -- native.list_builtin_sounds
 
-		for _, event in ipairs(events) do
-			for eventName, sound in pairs(event) do
-				vim.api.nvim_create_autocmd(eventName, {
-					group = "echo_sound",
-					pattern = "*",
-					callback = register_callback(eventName, sound.path, sound.amplify),
-				})
-			end
-		end
-		-- TODO: expose this as an option
-		vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-			pattern = { "*.mp3", "*.wav", "*.flac" },
-			callback = function()
-				local buf = vim.api.nvim_get_current_buf()
-				vim.api.nvim_set_option_value("filetype", "audio", { buf = buf })
-			end,
-		})
-		vim.api.nvim_create_autocmd("FileType", {
-			pattern = "audio",
-			callback = function()
-				setupAudioBufferUI(vim.fn.bufnr())
-			end,
-		})
-	end,
-	play_sound = native.play_sound,
-	options = native.options,
-	play_builtin = function(name)
-		native.play_sound(string.format("builtin:%s", name))
-	end,
-	list_builtin_sounds = native.list_builtin_sounds,
-}
+return M

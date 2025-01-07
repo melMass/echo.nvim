@@ -40,14 +40,23 @@ M.download_release = function(tag)
 	local extension = M.libext()
 	local os_name = M.sysname()
 
+	local dest_dir = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h")
+
+	vim.notify("build: Downloading binary to " .. dest_dir, vim.log.levels.INFO, { title = "echo.nvim" })
+
 	local lib_name = string.format("%s-echo_native.%s", os_name, extension)
 	local url = string.format("https://github.com/melmass/echo.nvim/releases/download/%s/%s", tag, lib_name)
 
 	local cmd = ""
 	if vim.fn.executable("curl") == 1 then
-		cmd = string.format("curl -fSL -o lua/echo_native.%s %s", extension, url)
+		cmd = string.format("curl -fSL -o %s/echo_native.%s %s", dest_dir, extension, url)
 	elseif vim.fn.executable("wget") == 1 then
-		cmd = string.format("wget --no-verbose --tries=3 --retry-connrefused -O lua/echo_native.%s %s", extension, url)
+		cmd = string.format(
+			"wget --no-verbose --tries=3 --retry-connrefused -O %s/echo_native.%s %s",
+			dest_dir,
+			extension,
+			url
+		)
 	else
 		log_error("build: Neither curl nor wget is available to download the binary.")
 		return
