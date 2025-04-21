@@ -4,7 +4,6 @@ use rodio::{source::Source, Decoder, OutputStream};
 use std::io::Cursor;
 // use std::path::PathBuf;
 use std::sync::mpsc::{self, Sender};
-use std::sync::Arc;
 use std::thread;
 use tokio::runtime::Runtime;
 use tokio::sync::Semaphore;
@@ -48,10 +47,7 @@ impl SoundPlayer {
             let name = rest.trim();
             let sound = builtin_sounds::SOUND_NAMES.iter().find(|&&n| n == name);
             match sound {
-                Some(snd) => {
-                    let data = builtin_sounds::get_sound_from_string(snd).unwrap().to_vec();
-                    data
-                }
+                Some(snd) => builtin_sounds::get_sound_from_string(snd).unwrap().to_vec(),
                 None => {
                     return Err(Error::SoundNotFound(format!(
                         "{}, available sounds: {:?}",
@@ -69,9 +65,8 @@ impl SoundPlayer {
         self.play_from_bytes(bytes, amplify)
     }
     pub fn play_from_bytes(&self, bytes: Vec<u8>, amplify: f64) -> Result<(), Error> {
-        Ok(self
-            .sender
+        self.sender
             .send((bytes, amplify as f32))
-            .map_err(|e| Error::Runtime(e.to_string()))?)
+            .map_err(|e| Error::Runtime(e.to_string()))
     }
 }

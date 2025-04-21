@@ -72,6 +72,7 @@ M.setup = function(opts)
 	end
 
 	if native == nil then
+		print("No method could find the binary")
 		return
 	end
 
@@ -88,29 +89,31 @@ M.setup = function(opts)
 	local events = opts.events or {}
 	-- NOTE: register demo sound/events
 	if opts.demo then
-		table.insert(events, {
+		local demo_events = {
 			BufRead = { path = "builtin:EXPAND", amplify = 1.0 },
 			BufWrite = { path = "builtin:SUCCESS_2", amplify = 1.0 },
 			CursorMovedI = { path = "builtin:BUTTON_3", amplify = 0.45 },
 			ExitPre = { path = "builtin:COMPLETE_3", amplify = 1.0 },
 			InsertLeave = { path = "builtin:NOTIFICATION_5", amplify = 0.5 },
 			-- LazyReload = { path = "builtin:NOTIFICATION_6", amplify = 0.2 },
-		})
+		}
+
+		for k, v in pairs(demo_events) do
+			events[k] = v
+		end
 	end
 
 	vim.api.nvim_create_augroup("echo_sound", {
 		clear = true,
 	})
-
-	for _, event in ipairs(events) do
-		for eventName, sound in pairs(event) do
-			vim.api.nvim_create_autocmd(eventName, {
-				group = "echo_sound",
-				pattern = "*",
-				callback = register_callback(eventName, sound.path, sound.amplify),
-			})
-		end
+	for name, event in pairs(events) do
+		vim.api.nvim_create_autocmd(name, {
+			group = "echo_sound",
+			pattern = "*",
+			callback = register_callback(name, event.path, event.amplify),
+		})
 	end
+
 	-- TODO: expose this as an option
 	vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 		pattern = { "*.mp3", "*.wav", "*.flac" },

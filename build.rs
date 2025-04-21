@@ -20,7 +20,7 @@ fn main() {
                 if ext_str.eq_ignore_ascii_case("wav") || ext_str.eq_ignore_ascii_case("mp3") {
                     let stem = file_path
                         .file_stem()
-                        .and_then(|x| Some(x.to_string_lossy().to_string()))
+                        .map(|x| x.to_string_lossy().to_string())
                         .unwrap_or_else(|| String::from("unknown"))
                         .replace(".", "_")
                         .replace(" ", "_")
@@ -50,7 +50,7 @@ fn main() {
         "#,
         sound_names
             .iter()
-            .map(|name| { format!(r#""{}" => Some(&{}),"#, name, name) })
+            .map(|name| { format!(r#""{}" => Some({}),"#, name, name) })
             .collect::<Vec<_>>()
             .join("\n")
     );

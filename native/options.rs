@@ -4,18 +4,44 @@ use nvim_oxi::{lua, Object};
 use optfield::optfield;
 use serde::{Deserialize, Serialize};
 
+use std::collections::HashMap;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Event {
+    pub path: String,
+    pub amplify: Option<f64>,
+}
+
 #[optfield(pub OptionsOpt, attrs)]
-#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Options {
     pub amplify: f64,
     pub demo: bool,
+    pub events: HashMap<String, Event>,
 }
 
 impl Options {
+    /// crude option merging, might use typetag and whatnot if
+    /// options become more complex
     pub fn merge(&mut self, other: OptionsOpt) {
         // nvim_oxi::print!("Merging options, other: {other:?}");
         self.amplify = other.amplify.unwrap_or(self.amplify);
         self.demo = other.demo.unwrap_or(self.demo);
+        if let Some(events) = other.events {
+            for (key, event) in events {
+                self.events
+                    .entry(key)
+                    .and_modify(|existing| {
+                        if let Some(a) = event.amplify {
+                            existing.amplify = Some(a);
+                        }
+                        if !event.path.is_empty() {
+                            existing.path = event.path.clone();
+                        }
+                    })
+                    .or_insert(event);
+            }
+        }
     }
 }
 
@@ -24,6 +50,7 @@ impl Default for Options {
         Self {
             amplify: 1.0,
             demo: false,
+            events: HashMap::new(),
         }
     }
 }
