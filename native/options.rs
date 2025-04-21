@@ -54,66 +54,42 @@ impl Default for Options {
         }
     }
 }
+macro_rules! impl_nvim_conversion {
+    ($t:ty) => {
+        impl FromObject for $t {
+            fn from_object(obj: Object) -> Result<Self, ConversionError> {
+                Self::deserialize(Deserializer::new(obj)).map_err(Into::into)
+            }
+        }
 
-impl FromObject for Options {
-    fn from_object(obj: Object) -> Result<Self, ConversionError> {
-        // nvim_oxi::print!("called from_object on Options");
-        Self::deserialize(Deserializer::new(obj)).map_err(Into::into)
-    }
-}
+        impl ToObject for $t {
+            fn to_object(self) -> Result<Object, ConversionError> {
+                self.serialize(Serializer::new()).map_err(Into::into)
+            }
+        }
 
-impl ToObject for Options {
-    fn to_object(self) -> Result<Object, ConversionError> {
-        // nvim_oxi::print!("called to_object on Options");
-        self.serialize(Serializer::new()).map_err(Into::into)
-    }
-}
-impl FromObject for OptionsOpt {
-    fn from_object(obj: Object) -> Result<Self, ConversionError> {
-        // nvim_oxi::print!("called from_object on OptionsOpt");
-        Self::deserialize(Deserializer::new(obj)).map_err(Into::into)
-    }
-}
+        impl lua::Poppable for $t {
+            unsafe fn pop(lstate: *mut lua::ffi::State) -> Result<Self, lua::Error> {
+                let obj = Object::pop(lstate)?;
+                Self::from_object(obj).map_err(lua::Error::pop_error_from_err::<Self, _>)
+            }
+        }
 
-impl ToObject for OptionsOpt {
-    fn to_object(self) -> Result<Object, ConversionError> {
-        // nvim_oxi::print!("called to_object on OptionsOpt");
-        self.serialize(Serializer::new()).map_err(Into::into)
-    }
-}
-
-impl lua::Poppable for Options {
-    unsafe fn pop(lstate: *mut lua::ffi::State) -> Result<Self, lua::Error> {
-        // nvim_oxi::print!("called pop on Options");
-        let obj = Object::pop(lstate)?;
-        Self::from_object(obj).map_err(lua::Error::pop_error_from_err::<Self, _>)
-    }
+        impl lua::Pushable for $t {
+            unsafe fn push(
+                self,
+                lstate: *mut lua::ffi::State,
+            ) -> Result<std::ffi::c_int, lua::Error> {
+                self.to_object()
+                    .map_err(lua::Error::push_error_from_err::<Self, _>)?
+                    .push(lstate)
+            }
+        }
+    };
 }
 
-impl lua::Pushable for Options {
-    unsafe fn push(self, lstate: *mut lua::ffi::State) -> Result<std::ffi::c_int, lua::Error> {
-        // nvim_oxi::print!("called push on Options");
-        self.to_object()
-            .map_err(lua::Error::push_error_from_err::<Self, _>)?
-            .push(lstate)
-    }
-}
-impl lua::Poppable for OptionsOpt {
-    unsafe fn pop(lstate: *mut lua::ffi::State) -> Result<Self, lua::Error> {
-        // nvim_oxi::print!("called pop on OptionsOpt");
-        let obj = Object::pop(lstate)?;
-        Self::from_object(obj).map_err(lua::Error::pop_error_from_err::<Self, _>)
-    }
-}
-
-impl lua::Pushable for OptionsOpt {
-    unsafe fn push(self, lstate: *mut lua::ffi::State) -> Result<std::ffi::c_int, lua::Error> {
-        // nvim_oxi::print!("called push on OptionsOpt");
-        self.to_object()
-            .map_err(lua::Error::push_error_from_err::<Self, _>)?
-            .push(lstate)
-    }
-}
+impl_nvim_conversion!(Options);
+impl_nvim_conversion!(OptionsOpt);
 
 // merging
 // fn merge_value(a: &mut Value, b: &Value) {
