@@ -6,9 +6,6 @@ pub enum Error {
     #[error("Failed to initialize: `{0}`")]
     Initialization(String),
 
-    #[error("Failed to register: `{0}`")]
-    Registration(String),
-
     #[error("Could not find sound `{0}`")]
     SoundNotFound(String),
 
@@ -16,15 +13,15 @@ pub enum Error {
     Runtime(String),
 }
 
-impl Into<api::Error> for Error {
-    fn into(self) -> api::Error {
-        api::Error::Other(self.to_string())
+impl From<Error> for api::Error {
+    fn from(value: Error) -> Self {
+        api::Error::Other(value.to_string())
     }
 }
 
-impl Into<nvim_oxi::Error> for Error {
-    fn into(self) -> nvim_oxi::Error {
-        nvim_oxi::Error::Api(self.into())
+impl From<Error> for nvim_oxi::Error {
+    fn from(value: Error) -> Self {
+        nvim_oxi::Error::Api(value.into())
     }
 }
 
